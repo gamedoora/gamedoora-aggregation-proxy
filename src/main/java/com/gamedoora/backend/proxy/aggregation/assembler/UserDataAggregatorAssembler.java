@@ -43,6 +43,7 @@ public class UserDataAggregatorAssembler {
         }
 
         getProducerTemplate().requestBody("direct:addUserRoleQuery", roleDTOList, ArrayList.class);
+        String email = user.getUser().getEmail();
         UserDTO userDTO = getProducerTemplate().requestBody("direct:userQuery", email, UserDTO.class);
         return GdUser
                 .builder()
