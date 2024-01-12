@@ -36,22 +36,33 @@ public class UserDataAggregatorAssembler {
                 .build();
     }
 
-    public void addRoles(GdUser user) throws ClientResponseException{
+    public GdUser addRoles(GdUser user) throws ClientResponseException{
         List<RoleDTO> roleDTOList = user.getRoles();
         if(roleDTOList.isEmpty() || user.getUser().getEmail().isEmpty()){
             throw new ClientResponseException("No Roles found", 400);
         }
 
         getProducerTemplate().requestBody("direct:addUserRoleQuery", roleDTOList, ArrayList.class);
+        UserDTO userDTO = getProducerTemplate().requestBody("direct:userQuery", email, UserDTO.class);
+        return GdUser
+                .builder()
+                .user(userDTO)
+                .build();
     }
 
-    public void addSkills(GdUser user)throws ClientResponseException{
+    public GdUser addSkills(GdUser user)throws ClientResponseException{
         List<SkillsDTO> skillsDTOList = user.getSkills();
         if(skillsDTOList.isEmpty() || user.getUser().getEmail().isEmpty()){
             throw new ClientResponseException("No Roles found", 400);
         }
 
         getProducerTemplate().requestBody("direct:addUserSkillQuery", skillsDTOList, ArrayList.class);
+        String email = user.getUser().getEmail();
+        UserDTO userDTO = getProducerTemplate().requestBody("direct:userQuery", email, UserDTO.class);
+        return GdUser
+                .builder()
+                .user(userDTO)
+                .build();
     }
 
     public ProducerTemplate getProducerTemplate() {
